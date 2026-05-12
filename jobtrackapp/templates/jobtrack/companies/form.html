@@ -1,0 +1,68 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}{% if company %}Edit{% else %}New{% endif %} Company — JobTrack{% endblock %}
+{% block content %}
+<div class="container max-w-3xl py-8">
+  <a href="{% url 'jobtrack:companies' %}" class="mb-4 -ml-2 inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-foreground hover:bg-secondary">
+    <i data-lucide="arrow-left" class="h-4 w-4"></i> Back to companies
+  </a>
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold tracking-tight text-navy">{% if company %}Edit Company{% else %}New Company{% endif %}</h1>
+  </div>
+  <div class="rounded-xl border border-border bg-card p-6 shadow-card md:p-8">
+    <form method="post" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-medium">Name</label>
+          <input name="name" type="text" required value="{{ form.name.value|default:'' }}" placeholder="Company name"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-medium">Industry</label>
+          <input name="industry" type="text" value="{{ form.industry.value|default:'' }}" placeholder="e.g. Software, Finance"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-medium">Location</label>
+          <input name="location" type="text" value="{{ form.location.value|default:'' }}" placeholder="e.g. Tunis, TN"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-medium">Size</label>
+          <input name="size" type="text" value="{{ form.size.value|default:'' }}" placeholder="e.g. 50-100 employees"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Website</label>
+        <input name="website" type="url" value="{{ form.website.value|default:'' }}" placeholder="https://company.com"
+          class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Description</label>
+        <textarea name="description" rows="4" placeholder="About this company..."
+          class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">{{ form.description.value|default:'' }}</textarea>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Logo
+          <span class="text-xs font-normal text-muted-foreground">(PNG, JPG — optional)</span>
+        </label>
+        {% if company.logo %}
+        <div class="mb-2 flex items-center gap-3">
+          <img src="{{ company.logo.url }}" alt="Current logo" class="h-12 w-12 rounded-lg object-cover border border-border">
+          <span class="text-xs text-muted-foreground">Current logo</span>
+        </div>
+        {% endif %}
+        <input name="logo" type="file" accept="image/*"
+          class="block w-full text-sm text-muted-foreground file:mr-4 file:h-9 file:cursor-pointer file:rounded-md file:border-0 file:bg-secondary file:px-3 file:text-sm file:font-medium file:text-navy hover:file:bg-secondary/80">
+      </div>
+      <div class="flex justify-end gap-2 border-t border-border pt-5">
+        <a href="{% url 'jobtrack:companies' %}" class="inline-flex h-10 items-center rounded-md border border-border bg-background px-4 text-sm font-medium hover:bg-secondary">Cancel</a>
+        <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">{{ action }} Company</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

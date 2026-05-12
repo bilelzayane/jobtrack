@@ -1,0 +1,47 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}Login — JobTrack{% endblock %}
+{% block layout %}
+<div class="flex min-h-screen items-center justify-center bg-gradient-soft px-4">
+  <div class="w-full max-w-md">
+    <a href="{% url 'jobtrack:index' %}" class="mb-8 flex items-center justify-center gap-2">
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-navy text-white">
+        <i data-lucide="briefcase" class="h-5 w-5"></i>
+      </div>
+      <span class="text-xl font-bold text-navy">JobTrack</span>
+    </a>
+    <div class="rounded-2xl border border-border bg-card p-8 shadow-elevated">
+      <div class="mb-6 text-center">
+        <h1 class="text-2xl font-bold tracking-tight text-navy">Welcome back</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Sign in to manage your offers</p>
+      </div>
+      {% if form.errors %}
+      <div class="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+        Invalid credentials. Please try again.
+      </div>
+      {% endif %}
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        <div class="space-y-2">
+          <label for="id_username" class="text-sm font-medium text-foreground">Username</label>
+          <input id="id_username" name="username" type="text" required placeholder="your username"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+        <div class="space-y-2">
+          <label for="id_password" class="text-sm font-medium text-foreground">Password</label>
+          <input id="id_password" name="password" type="password" required  placeholder="your Password"
+            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+        <input type="hidden" name="next" value="{{ next|default:'' }}">
+        <button type="submit"
+          class="inline-flex h-11 w-full items-center justify-center rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">
+          Sign in
+        </button>
+      </form>
+    </div>
+    <p class="mt-6 text-center text-xs text-muted-foreground">
+      <a href="{% url 'jobtrack:index' %}" class="hover:text-navy">← Back to home</a>
+    </p>
+  </div>
+</div>
+<script>lucide.createIcons();</script>
+{% endblock %}

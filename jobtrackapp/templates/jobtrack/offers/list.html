@@ -1,0 +1,96 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}Job Offers — JobTrack{% endblock %}
+{% block content %}
+<div class="container py-8">
+  <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-navy">Job Offers</h1>
+      <p class="mt-1 text-sm text-muted-foreground">Browse and manage all internship and job postings.</p>
+    </div>
+    {% if user.is_authenticated %}
+    <a href="{% url 'jobtrack:offer_new' %}" class="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">
+      <i data-lucide="plus" class="h-4 w-4"></i> New Offer
+    </a>
+    {% endif %}
+  </div>
+
+  <form method="get" class="rounded-xl border border-border bg-card p-4 shadow-card">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center">
+      <div class="relative flex-1">
+        <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"></i>
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by title, company, location..."
+          class="h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+      </div>
+      <div class="flex gap-2">
+        {% if user.is_authenticated %}
+        <select name="status" class="h-10 rounded-md border border-input bg-background px-3 text-sm">
+          <option value="">All statuses</option>
+          <option {% if request.GET.status == "Open" %}selected{% endif %}>Open</option>
+          <option {% if request.GET.status == "Draft" %}selected{% endif %}>Draft</option>
+          <option {% if request.GET.status == "Closed" %}selected{% endif %}>Closed</option>
+        </select>
+        {% endif %}
+        <select name="type" class="h-10 rounded-md border border-input bg-background px-3 text-sm">
+          <option value="">All types</option>
+          <option {% if request.GET.type == "Internship" %}selected{% endif %}>Internship</option>
+          <option {% if request.GET.type == "Full-time" %}selected{% endif %}>Full-time</option>
+          <option {% if request.GET.type == "Part-time" %}selected{% endif %}>Part-time</option>
+          <option {% if request.GET.type == "Contract" %}selected{% endif %}>Contract</option>
+        </select>
+        <button type="submit" class="h-10 rounded-md border border-border bg-background px-3 text-sm font-medium hover:bg-secondary">Filter</button>
+      </div>
+    </div>
+  </form>
+
+  <div class="mt-4 overflow-hidden rounded-xl border border-border bg-card shadow-card">
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-secondary/50">
+          <tr class="text-left">
+            <th class="px-4 py-3 font-semibold text-navy">Title</th>
+            <th class="px-4 py-3 font-semibold text-navy">Company</th>
+            <th class="px-4 py-3 font-semibold text-navy">Type</th>
+            <th class="px-4 py-3 font-semibold text-navy">Location</th>
+            <th class="px-4 py-3 font-semibold text-navy">Salary</th>
+            {% if user.is_authenticated %}
+            <th class="px-4 py-3 font-semibold text-navy">Status</th>
+            {% endif %}
+            <th class="px-4 py-3 font-semibold text-navy">Posted</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for offer in offers %}
+          <tr class="border-t border-border hover:bg-secondary/30">
+            <td class="px-4 py-3 font-medium text-navy">{{ offer.title }}</td>
+            <td class="px-4 py-3">
+              <a href="{% url 'jobtrack:company_detail' offer.company.id %}" class="text-accent hover:underline">{{ offer.company.name }}</a>
+            </td>
+            <td class="px-4 py-3">{% include "jobtrack/partials/status_badge.html" with status=offer.type %}</td>
+            <td class="px-4 py-3 text-muted-foreground">{{ offer.location }}</td>
+            <td class="px-4 py-3 text-muted-foreground">{{ offer.salary }}</td>
+            {% if user.is_authenticated %}
+            <td class="px-4 py-3">{% include "jobtrack/partials/status_badge.html" with status=offer.status %}</td>
+            {% endif %}
+            <td class="px-4 py-3 text-muted-foreground">{{ offer.posted_at|date:"Y-m-d" }}</td>
+            <td class="px-4 py-3 text-right">
+              <a href="{% url 'jobtrack:offer_detail' offer.id %}" class="inline-flex h-8 items-center rounded-md px-3 text-sm font-medium text-foreground hover:bg-secondary">View</a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="8" class="px-4 py-12 text-center text-muted-foreground">
+              <i data-lucide="filter" class="mx-auto mb-2 h-6 w-6 opacity-50"></i>
+              <div>No offers match your filters.</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-2 text-xs text-muted-foreground">Showing {{ offers|length }} of {{ total_offers }} offers</div>
+  {% include "jobtrack/partials/pagination.html" %}
+</div>
+{% endblock %}

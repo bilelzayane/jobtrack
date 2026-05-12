@@ -1,0 +1,72 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}{% if offer %}Edit{% else %}New{% endif %} Offer — JobTrack{% endblock %}
+{% block content %}
+<div class="container max-w-3xl py-8">
+  <a href="{% url 'jobtrack:offers' %}" class="mb-4 -ml-2 inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-foreground hover:bg-secondary">
+    <i data-lucide="arrow-left" class="h-4 w-4"></i> Back to offers
+  </a>
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold tracking-tight text-navy">{% if offer %}Edit Job Offer{% else %}New Job Offer{% endif %}</h1>
+    <p class="mt-1 text-sm text-muted-foreground">Fill in the details to {% if offer %}update{% else %}publish{% endif %} this offer.</p>
+  </div>
+  <div class="rounded-xl border border-border bg-card p-6 shadow-card md:p-8">
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+      <div class="space-y-2">
+        <label for="id_title" class="text-sm font-medium">Title</label>
+        <input id="id_title" name="title" type="text" required value="{{ form.title.value|default:'' }}" placeholder="e.g. Backend Engineering Intern"
+          class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label for="id_company" class="text-sm font-medium">Company</label>
+          <select id="id_company" name="company" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+            <option value="">Select company</option>
+            {% for c in form.company.field.queryset %}
+            <option value="{{ c.id }}" {% if form.company.value|stringformat:"s" == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="space-y-2">
+          <label for="id_type" class="text-sm font-medium">Type</label>
+          <select id="id_type" name="type" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+            <option value="">Select type</option>
+            {% for val, label in form.type.field.choices %}
+            <option value="{{ val }}" {% if form.type.value == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label for="id_location" class="text-sm font-medium">Location</label>
+          <input id="id_location" name="location" type="text" value="{{ form.location.value|default:'' }}" placeholder="e.g. Tunis, TN or Remote"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+        <div class="space-y-2">
+          <label for="id_salary" class="text-sm font-medium">Salary</label>
+          <input id="id_salary" name="salary" type="text" value="{{ form.salary.value|default:'' }}" placeholder="e.g. 800 DT/mo"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+      </div>
+      <div class="space-y-2">
+        <label for="id_status" class="text-sm font-medium">Status</label>
+        <select id="id_status" name="status" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+          {% for val, label in form.status.field.choices %}
+          <option value="{{ val }}" {% if form.status.value == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="space-y-2">
+        <label for="id_description" class="text-sm font-medium">Description</label>
+        <textarea id="id_description" name="description" rows="5" placeholder="Describe the role, responsibilities, and requirements..."
+          class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring">{{ form.description.value|default:'' }}</textarea>
+      </div>
+      <div class="flex justify-end gap-2 border-t border-border pt-5">
+        <a href="{% url 'jobtrack:offers' %}" class="inline-flex h-10 items-center rounded-md border border-border bg-background px-4 text-sm font-medium hover:bg-secondary">Cancel</a>
+        <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">{{ action }} Offer</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

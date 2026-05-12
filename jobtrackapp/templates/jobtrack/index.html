@@ -1,0 +1,59 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}JobTrack — Dashboard{% endblock %}
+{% block content %}
+<section class="border-b border-border bg-secondary/30">
+  <div class="container py-16 md:py-24">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="text-4xl font-bold tracking-tight text-navy md:text-5xl">JobTrack</h1>
+      <p class="mx-auto mt-4 max-w-lg text-base text-muted-foreground md:text-lg">Manage companies, offers, and applications in one place.</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <a href="{% url 'jobtrack:offers' %}" class="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">
+          View Offers <i data-lucide="arrow-right" class="h-4 w-4"></i>
+        </a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'jobtrack:offer_new' %}" class="inline-flex h-10 items-center rounded-md border border-border bg-background px-4 text-sm font-medium text-foreground hover:bg-secondary">
+          Add Offer
+        </a>
+        {% endif %}
+        <a href="{% url 'jobtrack:companies' %}" class="inline-flex h-10 items-center rounded-md px-4 text-sm font-medium text-foreground hover:bg-secondary">
+          Companies
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container py-12">
+  <div class="grid gap-4 justify-center {% if user.is_authenticated %} md:grid-cols-3 {% else %} md:grid-cols-2 {% endif %}">
+    <div class="flex items-center justify-between rounded-xl border border-border bg-card p-6 shadow-card">
+      <div>
+        <p class="text-sm font-medium text-muted-foreground">Companies</p>
+        <p class="mt-1 text-3xl font-bold text-navy">{{ companies_count }}</p>
+      </div>
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-navy">
+        <i data-lucide="building-2" class="h-5 w-5"></i>
+      </div>
+    </div>
+    <div class="flex items-center justify-between rounded-xl border border-border bg-card p-6 shadow-card">
+      <div>
+        <p class="text-sm font-medium text-muted-foreground">Job Offers</p>
+        <p class="mt-1 text-3xl font-bold text-navy">{{ offers_count }}</p>
+      </div>
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-navy">
+        <i data-lucide="briefcase" class="h-5 w-5"></i>
+      </div>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="flex items-center justify-between rounded-xl border border-border bg-card p-6 shadow-card">
+      <div>
+        <p class="text-sm font-medium text-muted-foreground">Applications</p>
+        <p class="mt-1 text-3xl font-bold text-navy">{{ applications_count }}</p>
+      </div>
+      <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-navy">
+        <i data-lucide="file-text" class="h-5 w-5"></i>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

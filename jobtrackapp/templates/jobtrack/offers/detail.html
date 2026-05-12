@@ -1,0 +1,98 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}{{ offer.title }} — JobTrack{% endblock %}
+{% block content %}
+<div class="container py-8">
+  <a href="{% url 'jobtrack:offers' %}" class="mb-4 -ml-2 inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-foreground hover:bg-secondary">
+    <i data-lucide="arrow-left" class="h-4 w-4"></i> All offers
+  </a>
+  <div class="rounded-xl border border-border bg-card p-6 shadow-card md:p-8">
+    <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+      <div>
+        <div class="flex items-center gap-2">
+          {% include "jobtrack/partials/status_badge.html" with status=offer.status %}
+          {% include "jobtrack/partials/status_badge.html" with status=offer.type %}
+        </div>
+        <h1 class="mt-3 text-3xl font-bold tracking-tight text-navy">{{ offer.title }}</h1>
+        <a href="{% url 'jobtrack:company_detail' offer.company.id %}" class="mt-1 inline-flex items-center gap-1.5 text-accent hover:underline">
+          <i data-lucide="building-2" class="h-4 w-4"></i> {{ offer.company.name }}
+        </a>
+      </div>
+      <div class="flex gap-2">
+        {% if user.is_authenticated %}
+        <a href="{% url 'jobtrack:offer_edit' offer.id %}" class="inline-flex h-10 items-center rounded-md border border-border bg-background px-4 text-sm font-medium hover:bg-secondary">Edit</a>
+        <a href="{% url 'jobtrack:offer_delete' offer.id %}" class="inline-flex h-10 items-center rounded-md bg-red-600 px-4 text-sm font-medium text-white hover:bg-red-700">Delete</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="mt-6 grid gap-4 border-t border-border pt-6 sm:grid-cols-2 md:grid-cols-4">
+      <div class="flex items-start gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-navy"><i data-lucide="map-pin" class="h-4 w-4"></i></div>
+        <div><p class="text-xs text-muted-foreground">Location</p><p class="text-sm font-medium text-navy">{{ offer.location|default:"N/A" }}</p></div>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-navy"><i data-lucide="banknote" class="h-4 w-4"></i></div>
+        <div><p class="text-xs text-muted-foreground">Salary</p><p class="text-sm font-medium text-navy">{{ offer.salary|default:"N/A" }}</p></div>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-navy"><i data-lucide="briefcase" class="h-4 w-4"></i></div>
+        <div><p class="text-xs text-muted-foreground">Type</p><p class="text-sm font-medium text-navy">{{ offer.type }}</p></div>
+      </div>
+      <div class="flex items-start gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-md bg-secondary text-navy"><i data-lucide="calendar" class="h-4 w-4"></i></div>
+        <div><p class="text-xs text-muted-foreground">Posted</p><p class="text-sm font-medium text-navy">{{ offer.posted_at|date:"Y-m-d" }}</p></div>
+      </div>
+    </div>
+    {% if offer.description %}
+    <div class="mt-8">
+      <h2 class="mb-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Description</h2>
+      <p class="leading-relaxed text-foreground">{{ offer.description }}</p>
+    </div>
+    {% endif %}
+    <div class="mt-8">
+      <div class="mb-3 flex items-end justify-between">
+        <div>
+          <h2 class="text-xl font-semibold text-navy">Applications</h2>
+          {% if user.is_authenticated %}
+          <p class="text-sm text-muted-foreground">{{ applications|length }} candidates applied</p>
+          {% else %}
+          <p class="text-sm text-muted-foreground">Interested? Apply now.</p>
+          {% endif %}
+        </div>
+        <a href="{% url 'jobtrack:application_new' %}" class="inline-flex h-9 items-center gap-1.5 rounded-md bg-navy px-3 text-sm font-medium text-white hover:bg-navy-deep">
+          <i data-lucide="plus" class="h-4 w-4"></i> {% if user.is_authenticated %}Add{% else %}Apply{% endif %}
+        </a>
+      </div>
+      {% if user.is_authenticated %}
+      <div class="overflow-hidden rounded-xl border border-border bg-card shadow-card">
+        <table class="w-full text-sm">
+          <thead class="bg-secondary/50">
+            <tr class="text-left">
+              <th class="px-4 py-3 font-semibold text-navy">Candidate</th>
+              <th class="px-4 py-3 font-semibold text-navy">Email</th>
+              <th class="px-4 py-3 font-semibold text-navy">Status</th>
+              <th class="px-4 py-3 font-semibold text-navy">Applied</th>
+              <th class="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in applications %}
+            <tr class="border-t border-border hover:bg-secondary/30">
+              <td class="px-4 py-3 font-medium text-navy">{{ app.candidate_name }}</td>
+              <td class="px-4 py-3 text-muted-foreground">{{ app.candidate_email }}</td>
+              <td class="px-4 py-3">{% include "jobtrack/partials/status_badge.html" with status=app.status %}</td>
+              <td class="px-4 py-3 text-muted-foreground">{{ app.applied_at|date:"Y-m-d" }}</td>
+              <td class="px-4 py-3 text-right">
+                <a href="{% url 'jobtrack:application_detail' app.id %}" class="inline-flex h-8 items-center rounded-md px-3 text-sm text-foreground hover:bg-secondary">View</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5" class="px-4 py-8 text-center text-muted-foreground">No applications yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

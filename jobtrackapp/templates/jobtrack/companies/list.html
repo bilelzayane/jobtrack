@@ -1,0 +1,55 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}Companies — JobTrack{% endblock %}
+{% block content %}
+<div class="container py-8">
+  <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-navy">Companies</h1>
+      <p class="mt-1 text-sm text-muted-foreground">All organizations posting offers on JobTrack.</p>
+    </div>
+    {% if user.is_authenticated %}
+    <a href="{% url 'jobtrack:company_new' %}" class="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">
+      <i data-lucide="plus" class="h-4 w-4"></i> New Company
+    </a>
+    {% endif %}
+  </div>
+  <form method="get" class="rounded-xl border border-border bg-card p-4 shadow-card">
+    <div class="relative">
+      <i data-lucide="search" class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"></i>
+      <input type="text" name="q" value="{{ query }}" placeholder="Search companies..."
+        class="h-10 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+    </div>
+  </form>
+  <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {% for c in companies %}
+    <a href="{% url 'jobtrack:company_detail' c.id %}" class="group">
+      <div class="h-full rounded-xl border border-border bg-card p-6 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elevated">
+        <div class="flex items-start justify-between">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary text-navy">
+            {% if c.logo %}
+            <img src="{{ c.logo.url }}" alt="{{ c.name }}" class="h-12 w-12 rounded-lg object-cover">
+            {% else %}
+            <i data-lucide="building-2" class="h-6 w-6"></i>
+            {% endif %}
+          </div>
+          <span class="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-navy">{{ c.offers_count }} offers</span>
+        </div>
+        <h3 class="mt-4 text-lg font-semibold text-navy group-hover:text-accent">{{ c.name }}</h3>
+        <p class="mt-1 text-sm text-muted-foreground">{{ c.industry }}</p>
+        <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+          {% if c.location %}<span class="inline-flex items-center gap-1"><i data-lucide="map-pin" class="h-3 w-3"></i> {{ c.location }}</span>{% endif %}
+          {% if c.size %}<span class="inline-flex items-center gap-1"><i data-lucide="users" class="h-3 w-3"></i> {{ c.size }}</span>{% endif %}
+          {% if c.website %}<span class="inline-flex items-center gap-1"><i data-lucide="external-link" class="h-3 w-3"></i> Website</span>{% endif %}
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div class="col-span-full py-16 text-center text-muted-foreground">
+      <i data-lucide="building-2" class="mx-auto mb-2 h-8 w-8 opacity-40"></i>
+      <p>No companies found.</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% include "jobtrack/partials/pagination.html" %}
+</div>
+{% endblock %}

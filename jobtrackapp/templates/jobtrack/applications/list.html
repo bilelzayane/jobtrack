@@ -1,0 +1,53 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}Applications — JobTrack{% endblock %}
+{% block content %}
+<div class="container py-8">
+  <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div>
+      <h1 class="text-3xl font-bold tracking-tight text-navy">Applications</h1>
+      <p class="mt-1 text-sm text-muted-foreground">All candidates who applied to your offers.</p>
+    </div>
+    <a href="{% url 'jobtrack:application_new' %}"
+      class="inline-flex h-10 items-center gap-2 rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">
+      <i data-lucide="plus" class="h-4 w-4"></i> New Application
+    </a>
+  </div>
+  <div class="overflow-hidden rounded-xl border border-border bg-card shadow-card">
+    <table class="w-full text-sm">
+      <thead class="bg-secondary/50">
+        <tr class="text-left">
+          <th class="px-4 py-3 font-semibold text-navy">Candidate</th>
+          <th class="px-4 py-3 font-semibold text-navy">Email</th>
+          <th class="px-4 py-3 font-semibold text-navy">Offer</th>
+          <th class="px-4 py-3 font-semibold text-navy">Company</th>
+          <th class="px-4 py-3 font-semibold text-navy">Status</th>
+          <th class="px-4 py-3 font-semibold text-navy">Applied</th>
+          <th class="px-4 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in applications %}
+        <tr class="border-t border-border hover:bg-secondary/30">
+          <td class="px-4 py-3 font-medium text-navy">{{ app.candidate_name }}</td>
+          <td class="px-4 py-3 text-muted-foreground">{{ app.candidate_email }}</td>
+          <td class="px-4 py-3"><a href="{% url 'jobtrack:offer_detail' app.offer.id %}"
+              class="text-accent hover:underline">{{ app.offer.title }}</a></td>
+          <td class="px-4 py-3 text-muted-foreground">{{ app.offer.company.name }}</td>
+          <td class="px-4 py-3">{% include "jobtrack/partials/status_badge.html" with status=app.status %}</td>
+          <td class="px-4 py-3 text-muted-foreground">{{ app.applied_at|date:"Y-m-d" }}</td>
+          <td class="px-4 py-3 text-right">
+            <a href="{% url 'jobtrack:application_detail' app.id %}"
+              class="inline-flex h-8 items-center rounded-md px-3 text-sm text-foreground hover:bg-secondary">View</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-4 py-12 text-center text-muted-foreground">No applications yet.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% include "jobtrack/partials/pagination.html" %}
+</div>
+{% endblock %}

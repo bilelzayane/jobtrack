@@ -1,0 +1,15 @@
+{% spaceless %}
+{% if status == "Open" or status == "Offer" %}
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium bg-green-50 text-green-700 border-green-200">{{ status }}</span>
+{% elif status == "Draft" or status == "Interview" or status == "Contract" %}
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium bg-yellow-50 text-yellow-700 border-yellow-200">{{ status }}</span>
+{% elif status == "Reviewed" or status == "Internship" %}
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-700 border-blue-200">{{ status }}</span>
+{% elif status == "Rejected" %}
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium bg-red-50 text-red-700 border-red-200">{{ status }}</span>
+{% elif status == "Full-time" %}
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium bg-navy/10 text-navy border-navy/20">{{ status }}</span>
+{% else %}
+<span class="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium bg-muted text-muted-foreground border-border">{{ status }}</span>
+{% endif %}
+{% endspaceless %}

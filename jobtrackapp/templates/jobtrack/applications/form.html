@@ -1,0 +1,71 @@
+{% extends "jobtrack/base.html" %}
+{% block title %}{% if application %}Edit{% else %}New{% endif %} Application — JobTrack{% endblock %}
+{% block content %}
+<div class="container max-w-2xl py-8">
+  {% if user.is_authenticated %}
+  <a href="{% url 'jobtrack:applications' %}" class="mb-4 -ml-2 inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-foreground hover:bg-secondary">
+    <i data-lucide="arrow-left" class="h-4 w-4"></i> Back to applications
+  </a>
+  {% else %}
+  <a href="{% url 'jobtrack:offers' %}" class="mb-4 -ml-2 inline-flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-foreground hover:bg-secondary">
+    <i data-lucide="arrow-left" class="h-4 w-4"></i> Back to offers
+  </a>
+  {% endif %}
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold tracking-tight text-navy">{% if application %}Edit Application{% else %}New Application{% endif %}</h1>
+  </div>
+  <div class="rounded-xl border border-border bg-card p-6 shadow-card md:p-8">
+    <form method="post" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Offer</label>
+        <select name="offer" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+          {% for o in form.offer.field.queryset %}
+          <option value="{{ o.id }}" {% if form.offer.value|stringformat:"s" == o.id|stringformat:"s" %}selected{% endif %}>{{ o.title }} — {{ o.company.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div class="space-y-2">
+          <label class="text-sm font-medium">Candidate Name</label>
+          <input name="candidate_name" type="text" required value="{{ form.candidate_name.value|default:'' }}" placeholder="Full name"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+        <div class="space-y-2">
+          <label class="text-sm font-medium">Candidate Email</label>
+          <input name="candidate_email" type="email" required value="{{ form.candidate_email.value|default:'' }}" placeholder="email@example.com"
+            class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring">
+        </div>
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium">CV (PDF only)</label>
+        {% if application.cv_file %}
+        <div class="mb-1 text-xs text-muted-foreground">Current: {{ application.cv_file.name|slice:"5:" }}</div>
+        {% endif %}
+        <input name="cv_file" type="file" accept=".pdf"
+          class="block w-full text-sm text-muted-foreground file:mr-4 file:h-9 file:cursor-pointer file:rounded-md file:border-0 file:bg-secondary file:px-3 file:text-sm file:font-medium file:text-navy hover:file:bg-secondary/80">
+      </div>
+
+      {% if user.is_authenticated %}
+      <div class="space-y-2">
+        <label class="text-sm font-medium">Status</label>
+        <select name="status" class="h-10 w-full rounded-md border border-input bg-background px-3 text-sm">
+          {% for val, label in form.status.field.choices %}
+          <option value="{{ val }}" {% if form.initial.status == val or form.value == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="flex justify-end gap-2 border-t border-border pt-5">
+        <a 
+        href="{% if user.is_authenticated %}{% url 'jobtrack:applications' %}{% else %}{% url 'jobtrack:offers' %}{% endif %}"
+        class="inline-flex h-10 items-center rounded-md border border-border bg-background px-4 text-sm font-medium hover:bg-secondary"
+        >
+        Cancel
+      </a>
+        <button type="submit" class="inline-flex h-10 items-center rounded-md bg-navy px-4 text-sm font-medium text-white hover:bg-navy-deep">{{ action }} Application</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
